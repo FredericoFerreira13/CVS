@@ -1,4 +1,5 @@
-package project;
+import project.*;
+
 public class Main {
     
 }
