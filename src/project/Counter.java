@@ -1,4 +1,4 @@
-package project;
+package src.project;
 
 /*@
     predicate CounterInv(int v, int l, boolean over) = this.val |-> v &*& this.limit |-> l &*& this.overflow |-> over &*& && 0 <= v &*& v < l;
