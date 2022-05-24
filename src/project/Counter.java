@@ -38,9 +38,8 @@ public class Counter {
     public void incr(int v) 
     //@ requires CounterInv(this,?val,?limit,?overflow) &*& v >= 0;
     //@ ensures ((val + v >= limit) ? CounterInv(this,(val+v) % limit, limit,true) : CounterInv(this,val+v,limit,overflow));
-    {  
-        if(this.val 
-        + v >= this.limit){
+    {
+        if(this.val + v >= this.limit){
             this.val = (this.val + v) % this.limit;
             this.overflow = true;
         }
@@ -49,7 +48,7 @@ public class Counter {
         }
     }
 
-    public void decr(int v) 
+    public void decr(int v)
     //@ requires CounterInv(this,?val,?limit,?overflow) &*& v >= 0;
     //@ ensures ((val - v < 0) ? CounterInv(this,0,limit,true) : CounterInv(this,val-v,limit,overflow));
     {
