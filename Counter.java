@@ -5,7 +5,11 @@ public class Counter {
     private int limit;
     private boolean overflow;
 
-    public Counter(int val, int limit) {  }
+    public Counter(int val, int limit) { 
+        this.val = val;
+        this.limit = limit;
+        this.overflow = false;
+     }
 
     public int getVal() { return 0; }
 
