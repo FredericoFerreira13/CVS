@@ -1,25 +1,25 @@
 package src.project;
 
 /*@
-    predicate CounterP(unit a, Counter c; unit b) = CounterInv(?v, ?l, ?over) &*& b == unit;
+    predicate CounterP(unit a, Counter c; unit b) = CounterInv(c,?v, ?l, ?over) &*& b == unit;
 @*/ 
 
 
 /*@
     predicate CounterSequenceInv(CounterSequence cs; int l, int c) = cs.length |-> l &*& cs.capacity |-> c &*& c > 0
-    &*& this.sequence |-> ?counters &*& counters.length == c &*& 0 <= l &*& l <= c
+    &*& cs.sequence |-> ?counters &*& counters.length == c &*& 0 <= l &*& l <= c
     &*& array_slice_deep(counters, 0, l, CounterP, unit, _, _) &*& array_slice(counters, l, c, ?counter);
 @*/
 
 public class CounterSequence {
 
-    Counter sequence[];
-    int length;
-    int capacity;
+    private Counter sequence[];
+    private int length;
+    private int capacity;
     
     public CounterSequence(int cap)
     //@ requires cap > 0;
-    //@ ensures CounterSequenceInv(this, length, capacity);
+    //@ ensures CounterSequenceInv(this, 0, cap);
     {
         length = 0;
         capacity = cap;
