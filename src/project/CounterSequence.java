@@ -8,7 +8,8 @@ package src.project;
 /*@
     predicate CounterSequenceInv(CounterSequence cs; int l, int c) = cs.length |-> l &*& cs.capacity |-> c &*& c > 0
     &*& cs.sequence |-> ?counters &*& counters.length == c &*& 0 <= l &*& l <= c
-    &*& array_slice_deep(counters, 0, l, CounterP, unit, _, _) &*& array_slice(counters, l, c, ?counter);
+    &*& array_slice_deep(counters, 0, l, CounterP, unit, _, _) &*& array_slice(counters, l, c, ?counter)
+    &*& all_eq(counter, null) == true;
 @*/
 
 public class CounterSequence {
@@ -27,6 +28,7 @@ public class CounterSequence {
     }
 
     public CounterSequence(int[] arr) 
+    
     //@ requires arr != null &*& arr.length > 0 &*& array_slice(arr, 0, arr.length,?vs);
     //@ ensures CounterSequenceInv(this, arr.length, arr.length) &*& array_slice(arr, 0, arr.length,vs);
     {
@@ -35,12 +37,10 @@ public class CounterSequence {
         this.sequence = new Counter[capacity];
 
         for(int i = 0; i < arr.length; i++)
-        //@ invariant 0 <= i &*& i <= arr.length;
+        //@ invariant 0 <= i &*& i <= arr.length &*& array_slice(arr, 0, arr.length,vs);
         {
-            Counter c = new Counter(0, arr[i]);
-            this.sequence[i] = c;
+            this.sequence[i] = new Counter(0, arr[i]);
         }
-
     }
     
     public int length() 
@@ -58,15 +58,31 @@ public class CounterSequence {
     }
     
     public int getCounter(int i) 
-    //@ requires CounterSequenceInv(this, ?l, ?c);
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i < l;
     //@ ensures CounterSequenceInv(this, l, c);
     { 
         return this.sequence[i].getVal();
     }
     
-    public int addCounter(int limit) { return 0; }
+    public int addCounter(int limit) 
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& limit > 0;
+    //@ ensures CounterSequenceInv(this, l+1, c);
+    { 
+        Counter d = new Counter(0, limit);
+        this.sequence[length] = d;
+        //@ array_slice_deep_close(sequence,l,CounterP,unit);
+        this.length = this.length+1;
+        return this.length-1; 
+    }
     
-    public void remCounter(int pos) {  }
+    public void remCounter(int pos) 
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& pos < l;
+    //@ ensures CounterSequenceInv(this, l-1 ,c);
+    {  
+        this.sequence[pos] = this.sequence[length-1];
+        this.sequence[length-1] = null;
+        this.length = this.length - 1;
+    }
     
     public void remCounterPO(int pos) {  }
     
