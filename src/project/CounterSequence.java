@@ -21,18 +21,48 @@ public class CounterSequence {
     //@ requires cap > 0;
     //@ ensures CounterSequenceInv(this, 0, cap);
     {
-        length = 0;
-        capacity = cap;
-        sequence = new Counter[cap];
+        this.length = 0;
+        this.capacity = cap;
+        this.sequence = new Counter[cap];
     }
 
-    public CounterSequence(int[] arr) {  }
+    public CounterSequence(int[] arr) 
+    //@ requires arr != null &*& arr.length > 0 &*& array_slice(arr, 0, arr.length,?vs);
+    //@ ensures CounterSequenceInv(this, arr.length, arr.length) &*& array_slice(arr, 0, arr.length,vs);
+    {
+        this.capacity = arr.length;
+        this.length = arr.length;
+        this.sequence = new Counter[capacity];
+
+        for(int i = 0; i < arr.length; i++)
+        //@ invariant 0 <= i &*& i <= arr.length;
+        {
+            Counter c = new Counter(0, arr[i]);
+            this.sequence[i] = c;
+        }
+
+    }
     
-    public int length() { return 0; }
+    public int length() 
+    //@ requires CounterSequenceInv(this, ?l, ?c);
+    //@ ensures CounterSequenceInv(this, l, c) &*& result == l;
+    {
+        return this.length;
+    }
     
-    public int capacity() { return 0; }
+    public int capacity() 
+    //@ requires CounterSequenceInv(this, ?l, ?c);
+    //@ ensures CounterSequenceInv(this, l, c) &*& result == c;
+    { 
+        return this.capacity; 
+    }
     
-    public int getCounter(int i) { return 0; }
+    public int getCounter(int i) 
+    //@ requires CounterSequenceInv(this, ?l, ?c);
+    //@ ensures CounterSequenceInv(this, l, c);
+    { 
+        return this.sequence[i].getVal();
+    }
     
     public int addCounter(int limit) { return 0; }
     
