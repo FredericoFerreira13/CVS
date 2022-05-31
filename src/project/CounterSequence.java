@@ -6,10 +6,13 @@ package src.project;
 
 
 /*@
+    predicate Positive(unit a, int v; unit n) = v > 0 &*& n == unit;
+@*/
+
+/*@
     predicate CounterSequenceInv(CounterSequence cs; int l, int c) = cs.length |-> l &*& cs.capacity |-> c &*& c > 0
     &*& cs.sequence |-> ?counters &*& counters.length == c &*& 0 <= l &*& l <= c
-    &*& array_slice_deep(counters, 0, l, CounterP, unit, _, _) &*& array_slice(counters, l, c, ?counter)
-    &*& all_eq(counter, null) == true;
+    &*& array_slice_deep(counters, 0, l, CounterP, unit, _, _) &*& array_slice(counters, l, c, ?counter);
 @*/
 
 public class CounterSequence {
@@ -28,16 +31,22 @@ public class CounterSequence {
     }
 
     public CounterSequence(int[] arr) 
-    
-    //@ requires arr != null &*& arr.length > 0 &*& array_slice(arr, 0, arr.length,?vs);
-    //@ ensures CounterSequenceInv(this, arr.length, arr.length) &*& array_slice(arr, 0, arr.length,vs);
+    //@ requires arr != null &*& arr.length > 0 &*& array_slice_deep(arr, 0, arr.length, Positive, unit, ?vs, _);
+    //@ ensures CounterSequenceInv(this, arr.length, arr.length);
     {
         this.capacity = arr.length;
         this.length = arr.length;
         this.sequence = new Counter[capacity];
 
         for(int i = 0; i < arr.length; i++)
-        //@ invariant 0 <= i &*& i <= arr.length &*& array_slice(arr, 0, arr.length,vs);
+        /*@ 
+            invariant 0 <= i &*& i <= arr.length 
+            &*& array_slice_deep(arr, 0, arr.length, Positive, unit, _, _)
+            &*& this.sequence |-> ?counters 
+            &*& counters.length == arr.length
+            &*& array_slice(counters,i,arr.length,?v) 
+            &*& array_slice_deep(counters,0,i,CounterP,unit, _,_);
+        @*/
         {
             this.sequence[i] = new Counter(0, arr[i]);
         }
@@ -58,7 +67,7 @@ public class CounterSequence {
     }
     
     public int getCounter(int i) 
-    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i < l;
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i>0 &*& i < l &*& this.sequence |-> ?counters &*& array_slice(counters,i,l,?v) &*& array_slice_deep(counters,0,l,CounterP,unit, _,_);
     //@ ensures CounterSequenceInv(this, l, c);
     { 
         return this.sequence[i].getVal();
