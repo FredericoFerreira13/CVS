@@ -67,8 +67,8 @@ public class CounterSequence {
     }
     
     public int getCounter(int i) 
-    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i>0 &*& i < l &*& this.sequence |-> ?counters &*& array_slice(counters,i,l,?v) &*& array_slice_deep(counters,0,l,CounterP,unit, _,_);
-    //@ ensures CounterSequenceInv(this, l, c);
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i>0 &*& i < l;
+    //@ ensures CounterSequenceInv(this, l, c) &*& CounterInv(_,result,_,_);
     { 
         return this.sequence[i].getVal();
     }
