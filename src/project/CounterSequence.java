@@ -67,35 +67,61 @@ public class CounterSequence {
     }
     
     public int getCounter(int i) 
-    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i>0 &*& i < l;
-    //@ ensures CounterSequenceInv(this, l, c) &*& CounterInv(_,result,_,_);
+    // requires CounterSequenceInv(this, ?l, ?c) &*& i>=0 &*& i < l;
+    // ensures CounterSequenceInv(this, l, c) &*& CounterInv(_,result,_,_);
     { 
         return this.sequence[i].getVal();
     }
     
     public int addCounter(int limit) 
-    //@ requires CounterSequenceInv(this, ?l, ?c) &*& limit > 0;
-    //@ ensures CounterSequenceInv(this, l+1, c);
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& limit > 0 &*& l<c;
+    //@ ensures CounterSequenceInv(this, l+1, c) &*& result == l;
     { 
         Counter d = new Counter(0, limit);
-        this.sequence[length] = d;
+        this.sequence[this.length] = d;
         //@ array_slice_deep_close(sequence,l,CounterP,unit);
         this.length = this.length+1;
-        return this.length-1; 
+        return this.length-1;
     }
     
     public void remCounter(int pos) 
-    //@ requires CounterSequenceInv(this, ?l, ?c) &*& pos < l;
-    //@ ensures CounterSequenceInv(this, l-1 ,c);
+    // requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
+    // ensures CounterSequenceInv(this, l-1 ,c);
     {  
         this.sequence[pos] = this.sequence[length-1];
         this.sequence[length-1] = null;
         this.length = this.length - 1;
     }
     
-    public void remCounterPO(int pos) {  }
+    public void remCounterPO(int pos) 
+    // requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
+    // ensures CounterSequenceInv(this, l-1 ,c);
+    {
+        for(int i = pos; i < this.length-1; i++)
+        /*@ invariant this.length |-> l 
+            &*& pos <= i &*& i <= l - 1
+            &*& this.sequence |-> ?counters 
+            &*& counters.length == c
+            &*& array_slice_deep(counters,i,l-1,CounterP,unit, _,_);
+        @*/
+        {
+            this.sequence[i] = this.sequence[i+1];
+        }
+        this.sequence[this.length-1] = null;
+        this.length = this.length - 1;
+    }
     
-    public void increment(int i, int val) {  }
+    public void increment(int i, int val) 
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i >= 0 &*& i < l &*& val >= 0;
+    //@ ensures CounterSequenceInv(this, l ,c);
+    {  
+        this.sequence[i].incr(val);
+    }
     
-    public void decrement(int i, int val) {  }
+    public void decrement(int i, int val) 
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i >= 0 &*& i < l &*& val >= 0;
+    //@ ensures CounterSequenceInv(this, l ,c);
+    {
+        this.sequence[i].decr(val);
+    }
 }
