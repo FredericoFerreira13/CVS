@@ -67,10 +67,12 @@ public class CounterSequence {
     }
     
     public int getCounter(int i) 
-    // requires CounterSequenceInv(this, ?l, ?c) &*& i>=0 &*& i < l;
-    // ensures CounterSequenceInv(this, l, c) &*& CounterInv(_,result,_,_);
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& i>=0 &*& i < l;
+    //@ ensures CounterSequenceInv(this, l, c) &*& result >= 0;
     { 
-        return this.sequence[i].getVal();
+        Counter d = this.sequence[i];
+        //@ open CounterInv(d,?result,?lim,?over);
+        return d.getVal();
     }
     
     public int addCounter(int limit) 
@@ -85,29 +87,42 @@ public class CounterSequence {
     }
     
     public void remCounter(int pos) 
-    // requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
-    // ensures CounterSequenceInv(this, l-1 ,c);
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
+    //@ ensures CounterSequenceInv(this, l-1 ,c);
     {  
+        if(length - pos > 1){
         this.sequence[pos] = this.sequence[length-1];
         this.sequence[length-1] = null;
         this.length = this.length - 1;
+        }
+        else{
+            this.sequence[pos] = null;
+            this.length = this.length - 1;
+        }
     }
     
     public void remCounterPO(int pos) 
-    // requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
-    // ensures CounterSequenceInv(this, l-1 ,c);
+    //@ requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
+    //@ ensures CounterSequenceInv(this, l-1 ,c);
     {
-        for(int i = pos; i < this.length-1; i++)
+        if(length - pos > 1){
+        for(int i = pos+1; i < this.length; i++)
         /*@ invariant this.length |-> l 
-            &*& pos <= i &*& i <= l - 1
+            &*& pos + 1 <= i &*& i <= l
             &*& this.sequence |-> ?counters 
             &*& counters.length == c
-            &*& array_slice_deep(counters,i,l-1,CounterP,unit, _,_);
+            &*& array_slice_deep(counters,0,i-1,CounterP,unit, _,_)
+            &*& array_slice_deep(counters,i,l-1,CounterP,unit, _,_)
+            &*& array_slice(counters, l, c, ?counter);
         @*/
         {
-            this.sequence[i] = this.sequence[i+1];
+            this.sequence[i-1] = this.sequence[i];
+            this.sequence[i] = null;
         }
-        this.sequence[this.length-1] = null;
+        }
+        else {
+            this.sequence[pos] = null;
+        }
         this.length = this.length - 1;
     }
     
