@@ -123,17 +123,21 @@ public class CounterSequence {
         this.length = this.length - 1;
     }
     
-    public void increment(int i, int val) 
+    public void increment(int i, int val)
     //@ requires CounterSequenceInv(this, ?l, ?c) &*& i >= 0 &*& i < l &*& val >= 0;
     //@ ensures CounterSequenceInv(this, l ,c);
-    {  
-        this.sequence[i].incr(val);
+    { 
+    	if (this.sequence[i] != null) {
+        	this.sequence[i].incr(val);
+        }
     }
     
     public void decrement(int i, int val) 
     //@ requires CounterSequenceInv(this, ?l, ?c) &*& i >= 0 &*& i < l &*& val >= 0;
     //@ ensures CounterSequenceInv(this, l ,c);
     {
-        this.sequence[i].decr(val);
+    	if (this.sequence[i] != null) {
+        	this.sequence[i].decr(val);
+        }
     }
 }
