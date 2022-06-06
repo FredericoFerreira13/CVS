@@ -105,23 +105,20 @@ public class CounterSequence {
     //@ requires CounterSequenceInv(this, ?l, ?c) &*& pos >= 0 &*& pos < l &*& l > 0;
     //@ ensures CounterSequenceInv(this, l-1 ,c);
     {
-        if(length - pos > 1){
+        this.sequence[pos] = null;
         for(int i = pos+1; i < this.length; i++)
         /*@ invariant this.length |-> l 
             &*& pos + 1 <= i &*& i <= l
             &*& this.sequence |-> ?counters 
             &*& counters.length == c
             &*& array_slice_deep(counters,0,i-1,CounterP,unit, _,_)
-            &*& array_slice_deep(counters,i,l-1,CounterP,unit, _,_)
-            &*& array_slice(counters, l, c, ?counter);
+            &*& array_slice_deep(counters,i,l,CounterP,unit, _,_)
+            &*& array_slice(counters, l, c, ?counter)
+            &*& array_element(counters,i-1,null);
         @*/
         {
             this.sequence[i-1] = this.sequence[i];
             this.sequence[i] = null;
-        }
-        }
-        else {
-            this.sequence[pos] = null;
         }
         this.length = this.length - 1;
     }
