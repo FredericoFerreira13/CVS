@@ -1,7 +1,7 @@
 package src.project;
 
 /*@
-    predicate CounterP(unit a, Counter c; unit b) = CounterInv(c,?v, ?l, ?over) &*& b == unit;
+    predicate CounterP(unit a, Counter c; unit b) = CounterInv(c,?v, ?l, ?over) &*& b == unit &*& c!= null;
 @*/ 
 
 
@@ -126,18 +126,14 @@ public class CounterSequence {
     public void increment(int i, int val)
     //@ requires CounterSequenceInv(this, ?l, ?c) &*& i >= 0 &*& i < l &*& val >= 0;
     //@ ensures CounterSequenceInv(this, l ,c);
-    { 
-    	if (this.sequence[i] != null) {
-        	this.sequence[i].incr(val);
-        }
+    {
+        this.sequence[i].incr(val);
     }
     
     public void decrement(int i, int val) 
     //@ requires CounterSequenceInv(this, ?l, ?c) &*& i >= 0 &*& i < l &*& val >= 0;
     //@ ensures CounterSequenceInv(this, l ,c);
     {
-    	if (this.sequence[i] != null) {
-        	this.sequence[i].decr(val);
-        }
+        this.sequence[i].decr(val);
     }
 }
