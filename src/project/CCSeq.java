@@ -32,7 +32,7 @@ public class CCSeq {
     {
     	this.seq = new CounterSequence(cap);
     	//@ close CCSeq_shared_state(this)();
- 	//@ close enter_lck(1, CCSeq_shared_state(this)); 
+ 	    //@ close enter_lck(1, CCSeq_shared_state(this)); 
         this.mon = new ReentrantLock();
         //@ close set_cond(CCSeq_shared_state(this), CCSeq_notfullseq(this));
         this.notfull = mon.newCondition();
@@ -127,7 +127,6 @@ public class CCSeq {
     //@ ensures CCSeqInv(this);
     
     {
-    	int length = 0;
     	//@ open CCSeqInv(this);
 	mon.lock();
 	//@ open CCSeq_shared_state(this)();
@@ -147,7 +146,6 @@ public class CCSeq {
 	    		//@ open CCSeq_notemptyseq(this)();
 		}
 		this.seq.remCounter(i);
-		length = this.seq.length();
 		//@ close CCSeq_notfullseq(this)();
 		
 		notfull.signal();  
@@ -155,6 +153,6 @@ public class CCSeq {
         mon.unlock();
 	//@ close CCSeqInv(this); 
 	
-        return length;
+        
     }
 }
